@@ -6,6 +6,14 @@ Get a beautiful year-end summary of your Claude Code usage - complete with stats
 
 ---
 
+## 🎨 DIY Usage - let Claude Code drive
+
+### One-Prompt Method (For the Adventurous!)
+Don't want to clone repos? See [PROMPT_METHOD.md](PROMPT_METHOD.md) for a single copy-paste prompt that lets Claude Code build everything from scratch.
+
+### Generate Visual Animations
+Want Spotify-style animated graphics? See [ANIMATION_GUIDE.md](ANIMATION_GUIDE.md) for prompts to create shareable visuals from your data.
+
 ## 🚀 Quick Start
 
 ### Run the Analysis
@@ -248,15 +256,6 @@ Special thanks to the Claude Code team for building an amazing tool.
 
 ---
 
-## 🎨 Advanced Usage
-
-### One-Prompt Method (For the Adventurous!)
-Don't want to clone repos? See [PROMPT_METHOD.md](PROMPT_METHOD.md) for a single copy-paste prompt that lets Claude Code build everything from scratch.
-
-### Generate Visual Animations
-Want Spotify-style animated graphics? See [ANIMATION_GUIDE.md](ANIMATION_GUIDE.md) for prompts to create shareable visuals from your data.
-
----
 
 **Made with ❤️ for the Claude Code community**
 
