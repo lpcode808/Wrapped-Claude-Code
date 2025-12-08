@@ -1,0 +1,42 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+*.so
+*.egg
+*.egg-info/
+dist/
+build/
+
+# OS
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Logs
+*.log
+
+# Personal wrapped results (don't commit your own stats!)
+my_wrapped_*.md
+my_stats_*.txt
+wrapped_results/
+archive/
+
+# Development files (keep local only)
+CLAUDE.md
+PUBLICATION_CHECKLIST.md
+log.md
+cleanup_repo.sh
