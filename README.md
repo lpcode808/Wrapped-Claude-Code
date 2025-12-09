@@ -142,10 +142,10 @@ Perfect for:
 
 ## 🔒 Privacy & Safety
 
-✅ **Read-only** - Never modifies your Claude Code data
-✅ **Local only** - All analysis happens on your machine
-✅ **No tracking** - No data sent anywhere
-✅ **Open source** - Review the code yourself
+- ✅ **Read-only** - Never modifies your Claude Code data
+- ✅ **Local only** - All analysis happens on your machine
+- ✅ **No tracking** - No data sent anywhere
+- ✅ **Open source** - Review the code yourself
 
 ---
 
