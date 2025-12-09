@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>$ cat transcript.log | Building Claude Code Wrapped</title>
+    <title>$ cat CC Wrapped | Claude Code</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🌯</text></svg>">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Crimson+Pro:wght@600&display=swap" rel="stylesheet">
@@ -539,6 +540,28 @@
             box-shadow: 0 0 10px rgba(204, 120, 92, 0.6);
         }
 
+        /* Scrolling Crab Easter Egg */
+        .crab-peek {
+            position: fixed;
+            bottom: 0;
+            z-index: 998;
+            pointer-events: none;
+            transition: transform 0.3s ease-out;
+            width: 80px;
+            height: 80px;
+            filter: drop-shadow(0 0 10px rgba(204, 120, 92, 0.5));
+        }
+
+        .crab-left {
+            left: 2rem;
+            transform: translateY(100%);
+        }
+
+        .crab-right {
+            right: 2rem;
+            transform: translateY(100%) scaleX(-1);
+        }
+
         @media (max-width: 768px) {
             .container {
                 padding: 1rem;
@@ -556,12 +579,37 @@
             .divider::after {
                 content: '──────────────────────';
             }
+
+            .crab-peek {
+                width: 50px;
+                height: 50px;
+            }
+
+            .crab-left {
+                left: 0.5rem;
+            }
+
+            .crab-right {
+                right: 0.5rem;
+            }
         }
     </style>
 </head>
 <body>
     <!-- Scroll Progress Bar -->
     <div class="progress-bar" id="progressBar"></div>
+
+    <!-- Peeking Crabs -->
+    <div class="crab-peek crab-left" id="crabLeft">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="51.916 43.705 51.965 32.726">
+            <path transform="matrix(1,0,0,1,51.959528,17.645891)" stroke="#ff7f56" fill="#CC785C" d="M14.301201,26.072279Q14.301201,26.072279 6.4928215,26.111274Q6.414042,38.830753 6.414042,38.830753C4.4103881,39.131726 1.2850898,38.338181 -0.00053264616,39.339828C0.38389387,41.289172 -0.63949803,44.629806 0.56583427,45.768089Q0.56583427,45.768089 6.414042,45.907L6.4955381,52.305734Q8.9041995,52.305734 8.9041995,52.305734C9.1861495,54.326667 8.3442748,56.976915 9.316964,58.636752C11.086075,58.484215 14.004357,59.442667 13.239102,56.651475C13.766782,55.388324 12.282177,52.071572 14.337326,52.381013C16.402511,52.074951 14.850859,55.408517 15.355587,56.676963C14.966686,58.313033 15.588801,58.937049 17.110497,58.629188C17.110497,58.629188 19.450696,58.629188 19.450696,58.629188C19.974577,56.971833 19.569113,55.125625 19.782584,53.392694C19.432571,51.914974 20.828815,52.358541 21.751177,52.305734C21.751177,52.305734 32.145669,52.305734 32.145669,52.305734C32.42762,54.326667 31.585743,56.976915 32.558434,58.636752C33.879654,58.621761 35.201023,58.632363 36.52231,58.629188C36.52231,58.629188 36.52231,52.292033 36.52231,52.292033C38.073514,52.098653 39.042318,52.477516 38.606872,54.234999C38.845716,56.051931 37.767587,59.525622 40.848684,58.638171C42.663297,59.197433 43.360472,58.113905 43.031655,56.454862Q43.031655,56.454862 43.08727,52.381013Q45.35105,52.230454 45.35105,52.230454C45.661916,50.225808 44.963253,47.232816 45.943317,45.857391C47.719631,45.431993 50.888525,46.472712 51.846365,45.265962C51.846365,45.265962 51.921745,38.906032 51.921745,38.906032C49.833611,38.571485 47.099942,39.556911 45.431282,38.421336C45.386826,34.344389 45.497905,30.258922 45.396929,26.179326C35.032498,26.024965 24.666414,26.05889 14.301201,26.072279ZM15.359593,35.79986C15.359593,35.79986 15.400794,38.490189 15.400794,38.490189C14.266162,39.624275 12.64013,38.646881 13.332107,37.052037C13.363054,35.384912 12.594978,32.013879 15.276819,33.181046C15.382427,34.038457 15.322771,34.929615 15.359593,35.79986ZM38.635171,35.892002Q38.635171,38.749752 38.635171,38.749752C35.685064,39.895156 36.744368,36.241777 36.535997,34.46456C35.948411,32.81052 37.20067,32.970537 38.355245,33.034252C38.985479,33.151344 38.465906,34.418244 38.635171,34.996305Q38.635171,34.996305 38.635171,35.892002Z" fill-rule="nonzero"/>
+        </svg>
+    </div>
+    <div class="crab-peek crab-right" id="crabRight">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="51.916 43.705 51.965 32.726">
+            <path transform="matrix(1,0,0,1,51.959528,17.645891)" stroke="#ff7f56" fill="#CC785C" d="M14.301201,26.072279Q14.301201,26.072279 6.4928215,26.111274Q6.414042,38.830753 6.414042,38.830753C4.4103881,39.131726 1.2850898,38.338181 -0.00053264616,39.339828C0.38389387,41.289172 -0.63949803,44.629806 0.56583427,45.768089Q0.56583427,45.768089 6.414042,45.907L6.4955381,52.305734Q8.9041995,52.305734 8.9041995,52.305734C9.1861495,54.326667 8.3442748,56.976915 9.316964,58.636752C11.086075,58.484215 14.004357,59.442667 13.239102,56.651475C13.766782,55.388324 12.282177,52.071572 14.337326,52.381013C16.402511,52.074951 14.850859,55.408517 15.355587,56.676963C14.966686,58.313033 15.588801,58.937049 17.110497,58.629188C17.110497,58.629188 19.450696,58.629188 19.450696,58.629188C19.974577,56.971833 19.569113,55.125625 19.782584,53.392694C19.432571,51.914974 20.828815,52.358541 21.751177,52.305734C21.751177,52.305734 32.145669,52.305734 32.145669,52.305734C32.42762,54.326667 31.585743,56.976915 32.558434,58.636752C33.879654,58.621761 35.201023,58.632363 36.52231,58.629188C36.52231,58.629188 36.52231,52.292033 36.52231,52.292033C38.073514,52.098653 39.042318,52.477516 38.606872,54.234999C38.845716,56.051931 37.767587,59.525622 40.848684,58.638171C42.663297,59.197433 43.360472,58.113905 43.031655,56.454862Q43.031655,56.454862 43.08727,52.381013Q45.35105,52.230454 45.35105,52.230454C45.661916,50.225808 44.963253,47.232816 45.943317,45.857391C47.719631,45.431993 50.888525,46.472712 51.846365,45.265962C51.846365,45.265962 51.921745,38.906032 51.921745,38.906032C49.833611,38.571485 47.099942,39.556911 45.431282,38.421336C45.386826,34.344389 45.497905,30.258922 45.396929,26.179326C35.032498,26.024965 24.666414,26.05889 14.301201,26.072279ZM15.359593,35.79986C15.359593,35.79986 15.400794,38.490189 15.400794,38.490189C14.266162,39.624275 12.64013,38.646881 13.332107,37.052037C13.363054,35.384912 12.594978,32.013879 15.276819,33.181046C15.382427,34.038457 15.322771,34.929615 15.359593,35.79986ZM38.635171,35.892002Q38.635171,38.749752 38.635171,38.749752C35.685064,39.895156 36.744368,36.241777 36.535997,34.46456C35.948411,32.81052 37.20067,32.970537 38.355245,33.034252C38.985479,33.151344 38.465906,34.418244 38.635171,34.996305Q38.635171,34.996305 38.635171,35.892002Z" fill-rule="nonzero"/>
+        </svg>
+    </div>
 
     <div class="container">
         <!-- Terminal Window -->
@@ -920,12 +968,37 @@ All with Claude Code. Naturally. 🎵</pre></div>
     </div>
 
     <script>
-        // Scroll progress bar
+        // Scroll progress bar and crab peeking
+        const crabLeft = document.getElementById('crabLeft');
+        const crabRight = document.getElementById('crabRight');
+
+        // Debug: Check if crabs exist
+        console.log('Crab Left:', crabLeft);
+        console.log('Crab Right:', crabRight);
+
         window.addEventListener('scroll', () => {
             const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
             const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
             const scrolled = (winScroll / height) * 100;
+
+            // Update progress bar
             document.getElementById('progressBar').style.width = scrolled + '%';
+
+            // Crab peeking logic - they peek up from the bottom as you scroll
+            // Left crab peeks up from 20% to 70% scroll
+            const leftPeek = Math.max(0, Math.min(100, (scrolled - 20) * (100 / 50)));
+            const leftTransformY = 100 - leftPeek;
+            crabLeft.style.transform = `translateY(${leftTransformY}%)`;
+
+            // Right crab peeks up from 30% to 80% scroll (offset for variety)
+            const rightPeek = Math.max(0, Math.min(100, (scrolled - 30) * (100 / 50)));
+            const rightTransformY = 100 - rightPeek;
+            crabRight.style.transform = `translateY(${rightTransformY}%) scaleX(-1)`;
+
+            // Debug logging (only log every 10% to avoid spam)
+            if (Math.floor(scrolled) % 10 === 0) {
+                console.log(`Scroll: ${scrolled.toFixed(1)}% | Left Peek: ${leftPeek.toFixed(1)}% (Y: ${leftTransformY.toFixed(1)}%) | Right Peek: ${rightPeek.toFixed(1)}% (Y: ${rightTransformY.toFixed(1)}%)`);
+            }
         });
 
         // Terminal button functionality
