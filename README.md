@@ -4,6 +4,7 @@
 
 Get a beautiful year-end summary of your Claude Code usage - complete with stats, insights, and shareable moments!
 
+View the behind the scenes here [https://lpcode808.github.io/Wrapped-Claude-Code/](https://lpcode808.github.io/Wrapped-Claude-Code/)
 ---
 
 ## 🎨 DIY Usage - let Claude Code drive
