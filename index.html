@@ -185,12 +185,13 @@
             display: none;
             color: var(--primary);
             font-family: 'JetBrains Mono', monospace;
-            font-size: 0.7rem;
-            line-height: 1.2;
+            font-size: 0.55rem;
+            line-height: 1.1;
             margin-bottom: 2rem;
-            text-align: center;
+            text-align: left;
             animation: warmGlow 4s ease-in-out infinite alternate;
             font-weight: 500;
+            overflow-x: auto;
         }
 
         @keyframes warmGlow {
@@ -574,7 +575,6 @@
             transform: translateY(100%) scaleX(-1);
         }
 
-        /* Tablet styles */
         @media (max-width: 768px) {
             .container {
                 padding: 1rem;
@@ -590,11 +590,6 @@
 
             .ascii-art-mobile {
                 display: block;
-                padding: 1.5rem;
-            }
-
-            .ascii-art {
-                font-size: 0.5rem;
             }
 
             .divider::before,
@@ -613,222 +608,6 @@
 
             .crab-right {
                 right: 0.5rem;
-            }
-
-            .terminal-title {
-                font-size: 0.7rem;
-                letter-spacing: 1px;
-            }
-
-            .stats-box {
-                padding: 1.5rem;
-            }
-        }
-
-        /* Mobile styles */
-        @media (max-width: 480px) {
-            * {
-                word-wrap: break-word;
-                overflow-wrap: break-word;
-            }
-
-            .container {
-                padding: 0.5rem;
-                max-width: 100%;
-            }
-
-            body.fullscreen .container {
-                padding: 1rem;
-            }
-
-            .terminal-header {
-                padding: 0.5rem 0.75rem;
-                flex-wrap: wrap;
-                gap: 0.25rem;
-            }
-
-            .terminal-button {
-                width: 10px;
-                height: 10px;
-            }
-
-            .terminal-title {
-                font-size: 0.6rem;
-                letter-spacing: 0.5px;
-                gap: 0.5rem;
-                flex-wrap: wrap;
-            }
-
-            .mode-indicator {
-                font-size: 0.6rem;
-                padding: 0.2rem 0.5rem;
-                letter-spacing: 0.5px;
-            }
-
-            .terminal {
-                padding: 1rem;
-                border-radius: 0 0 4px 4px;
-            }
-
-            /* Hide ASCII art on mobile - too wide */
-            .ascii-art {
-                display: none;
-            }
-
-            .boot-sequence {
-                font-size: 0.75rem;
-                margin-bottom: 1rem;
-            }
-
-            .code-block {
-                padding: 0.75rem;
-                font-size: 0.75rem;
-                overflow-x: auto;
-                max-width: 100%;
-            }
-
-            .code-block pre {
-                white-space: pre-wrap;
-                word-break: break-all;
-            }
-
-            .message {
-                margin: 1.5rem 0;
-                padding-left: 0.75rem;
-            }
-
-            .message.user {
-                padding: 1rem;
-                padding-left: 0.75rem;
-                margin-left: 0;
-            }
-
-            .message:hover,
-            .message.user:hover {
-                padding-left: 0.75rem;
-            }
-
-            .prompt {
-                font-size: 0.85rem;
-                margin-bottom: 0.5rem;
-            }
-
-            .message-text {
-                margin-left: 0.75rem;
-                font-size: 0.9rem;
-            }
-
-            .message-text p {
-                margin: 0.5rem 0;
-            }
-
-            .message-text ul {
-                padding-left: 1rem;
-                margin: 0.75rem 0;
-            }
-
-            .divider {
-                margin: 2.5rem 0;
-            }
-
-            .divider::before,
-            .divider::after {
-                content: '─────────────';
-                font-size: 0.8rem;
-            }
-
-            .divider-text {
-                font-size: 1.1rem;
-                letter-spacing: 1.5px;
-                margin: 0.75rem 0;
-            }
-
-            .stats-box {
-                padding: 1rem;
-                margin: 2rem 0;
-            }
-
-            .stats-box h3 {
-                font-size: 1.3rem;
-                margin-bottom: 1rem;
-                letter-spacing: 1px;
-            }
-
-            .stat-line {
-                flex-direction: column;
-                align-items: flex-start;
-                padding: 0.5rem;
-                gap: 0.25rem;
-            }
-
-            .stat-line:hover {
-                padding-left: 0.5rem;
-            }
-
-            .stat-label {
-                font-size: 0.85rem;
-            }
-
-            .stat-value {
-                font-size: 0.95rem;
-                margin-left: 1rem;
-            }
-
-            .footer {
-                padding: 2rem 0;
-            }
-
-            .footer-art {
-                font-size: 1.1rem;
-                margin-bottom: 1rem;
-            }
-
-            .footer-content {
-                font-size: 0.9rem;
-                padding: 0 0.5rem;
-            }
-
-            /* Video player mobile optimization */
-            .footer > div:has(iframe) {
-                padding: 1rem !important;
-                margin: 2rem auto !important;
-            }
-
-            .footer h3 {
-                font-size: 1.2rem !important;
-                margin-bottom: 1rem !important;
-            }
-
-            .footer iframe {
-                border-radius: 2px;
-            }
-
-            .crab-peek {
-                width: 40px;
-                height: 40px;
-            }
-
-            .crab-left {
-                left: 0.25rem;
-            }
-
-            .crab-right {
-                right: 0.25rem;
-            }
-
-            /* Minimize mode adjustments for mobile */
-            body.minimized .prompt {
-                font-size: 0.8rem;
-            }
-
-            body.minimized .message-tldr {
-                font-size: 0.85rem;
-                margin-left: 0.75rem;
-            }
-
-            /* Fullscreen mode on mobile - more padding */
-            body.fullscreen .terminal {
-                padding: 1.5rem;
             }
         }
     </style>
@@ -865,7 +644,6 @@
 
         <div class="terminal">
             <!-- ASCII Art Header - Desktop -->
-            <!-- ASCII Art Header -->
             <pre class="ascii-art">
  ██████╗██╗      █████╗ ██╗   ██╗██████╗ ███████╗     ██████╗ ██████╗ ██████╗ ███████╗
 ██╔════╝██║     ██╔══██╗██║   ██║██╔══██╗██╔════╝    ██╔════╝██╔═══██╗██╔══██╗██╔════╝
@@ -884,25 +662,24 @@
 
             <!-- ASCII Art Header - Mobile -->
             <pre class="ascii-art-mobile">
-   _____ _                 _
-  / ____| |               | |
- | |    | | __ _ _   _  __| | ___
- | |    | |/ _` | | | |/ _` |/ _ \
- | |____| | (_| | |_| | (_| |  __/
-  \_____|_|\__,_|\__,_|\__,_|\___|
+ _____ _                 _
+/ ____| | __ _ _   _  __| | ___
+| |    | |/ _` | | | |/ _` |/ _ \
+| |____| | (_| | |_| | (_| |  __/
+\_____|_|\__,_|\__,_|\__,_|\___|
 
-   ____          _
-  / ___|___   __| | ___
- | |   / _ \ / _` |/ _ \
- | |__| (_) | (_| |  __/
-  \____\___/ \__,_|\___|
+ ____          _
+/ ___|___   __| | ___
+| |   / _ \ / _` |/ _ \
+| |__| (_) | (_| |  __/
+\____\___/ \__,_|\___|
 
- __        __                           _
- \ \      / / __ __ _ _ __  _ __   ___| |
-  \ \ /\ / / '__/ _` | '_ \| '_ \ / _ \ |
-   \ V  V /| | | (_| | |_) | |_) |  __/ |
-    \_/\_/ |_|  \__,_| .__/| .__/ \___|_|
-                     |_|   |_|
+__        __                         _
+\ \      / / __ __ _ _ __  _ __   __| |
+ \ \ /\ / / '__/ _` | '_ \| '_ \ / _` |
+  \ V  V /| | | (_| | |_) | |_) | (_| |
+   \_/\_/ |_|  \__,_| .__/| .__/ \__,_|
+                    |_|   |_|
             </pre>
 
             <!-- Boot Sequence -->
@@ -1319,5 +1096,4 @@ All with Claude Code. Naturally. 🎵</pre></div>
         });
     </script>
 </body>
-</html>
 </html>
