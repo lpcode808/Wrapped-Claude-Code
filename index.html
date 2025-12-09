@@ -1,0 +1,1099 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>$ cat CC Wrapped | Claude Code</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🌯</text></svg>">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Crimson+Pro:wght@600&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            /* Claude's warm palette */
+            --primary: #CC785C;        /* Book Cloth terracotta */
+            --primary-dark: #C15F3C;   /* Claude terracotta */
+            --secondary: #D4A574;      /* Warm golden accent */
+            --accent: #B88B6F;         /* Warmer muted accent */
+            --bg: #1a1614;             /* Warm dark brown-black */
+            --bg-light: #2a2421;       /* Slightly lighter warm dark */
+            --text: #F4F3EE;           /* Pampas off-white */
+            --text-muted: #B1ADA1;     /* Cloudy warm gray */
+        }
+
+        body {
+            font-family: 'JetBrains Mono', monospace;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.8;
+            position: relative;
+        }
+
+        /* Subtle warm CRT Effect */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: repeating-linear-gradient(
+                0deg,
+                rgba(204, 120, 92, 0.03),
+                rgba(204, 120, 92, 0.03) 1px,
+                transparent 1px,
+                transparent 2px
+            );
+            pointer-events: none;
+            z-index: 1000;
+        }
+
+        body::after {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(ellipse at center, transparent 0%, rgba(26, 22, 20, 0.4) 100%);
+            pointer-events: none;
+            z-index: 999;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 2rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Terminal Header */
+        .terminal-header {
+            background: var(--bg-light);
+            border: 2px solid var(--primary);
+            border-radius: 8px 8px 0 0;
+            padding: 0.75rem 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            box-shadow: 0 0 30px rgba(204, 120, 92, 0.2);
+            margin-top: 2rem;
+        }
+
+        .terminal-button {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            border: 1px solid var(--primary);
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .terminal-button:hover {
+            transform: scale(1.2);
+            box-shadow: 0 0 8px currentColor;
+        }
+
+        .terminal-button.close {
+            background: #d97066;
+            border-color: #d97066;
+        }
+
+        .terminal-button.close:hover {
+            box-shadow: 0 0 8px #d97066;
+        }
+
+        .terminal-button.minimize {
+            background: #d4a574;
+            border-color: #d4a574;
+        }
+
+        .terminal-button.minimize:hover {
+            box-shadow: 0 0 8px #d4a574;
+        }
+
+        .terminal-button.maximize {
+            background: var(--primary);
+        }
+
+        .terminal-button.maximize:hover {
+            box-shadow: 0 0 8px var(--primary);
+        }
+
+        .terminal-title {
+            flex: 1;
+            text-align: center;
+            color: var(--primary);
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem;
+        }
+
+        .mode-indicator {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            background: rgba(204, 120, 92, 0.15);
+            padding: 0.25rem 0.75rem;
+            border-radius: 12px;
+            font-weight: 500;
+            letter-spacing: 1px;
+            display: none;
+        }
+
+        body.closed .mode-indicator.mode-closed,
+        body.minimized .mode-indicator.mode-minimized,
+        body.fullscreen .mode-indicator.mode-fullscreen {
+            display: inline-block;
+        }
+
+        /* Terminal Body */
+        .terminal {
+            background: var(--bg-light);
+            border: 2px solid var(--primary);
+            border-top: none;
+            border-radius: 0 0 8px 8px;
+            padding: 2rem;
+            box-shadow: 0 0 30px rgba(204, 120, 92, 0.2);
+            margin-bottom: 4rem;
+        }
+
+        /* ASCII Art */
+        .ascii-art {
+            color: var(--primary);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.75rem;
+            line-height: 1.1;
+            margin-bottom: 2rem;
+            text-align: center;
+            animation: warmGlow 4s ease-in-out infinite alternate;
+            font-weight: 500;
+        }
+
+        .ascii-art-mobile {
+            display: none;
+            color: var(--primary);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.7rem;
+            line-height: 1.2;
+            margin-bottom: 2rem;
+            text-align: center;
+            animation: warmGlow 4s ease-in-out infinite alternate;
+            font-weight: 500;
+        }
+
+        @keyframes warmGlow {
+            0%, 100% {
+                opacity: 1;
+                text-shadow: 0 0 10px rgba(204, 120, 92, 0.3);
+            }
+            50% {
+                opacity: 0.95;
+                text-shadow: 0 0 20px rgba(204, 120, 92, 0.5);
+            }
+        }
+
+        .boot-sequence {
+            color: var(--primary);
+            margin-bottom: 2rem;
+            font-weight: 500;
+        }
+
+        .boot-sequence p {
+            margin: 0.25rem 0;
+            animation: typeIn 0.3s ease-out both;
+        }
+
+        .boot-sequence p:nth-child(1) { animation-delay: 0s; }
+        .boot-sequence p:nth-child(2) { animation-delay: 0.1s; }
+        .boot-sequence p:nth-child(3) { animation-delay: 0.2s; }
+        .boot-sequence p:nth-child(4) { animation-delay: 0.3s; }
+
+        @keyframes typeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        /* Messages */
+        .message {
+            margin: 2rem 0;
+            border-left: 2px solid var(--primary);
+            padding-left: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .message:hover {
+            border-left-color: var(--primary-dark);
+            background: rgba(204, 120, 92, 0.05);
+            padding-left: 1.5rem;
+        }
+
+        .message.user {
+            border-left-color: var(--secondary);
+            background: rgba(0, 0, 0, 0.4);
+            padding: 1.25rem;
+            padding-left: 1rem;
+            border-radius: 8px;
+            margin-left: -0.5rem;
+        }
+
+        .message.user:hover {
+            border-left-color: var(--secondary);
+            background: rgba(0, 0, 0, 0.5);
+            padding-left: 1.5rem;
+        }
+
+        .prompt {
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+            font-weight: 700;
+        }
+
+        .user .prompt {
+            color: var(--secondary);
+        }
+
+        .prompt::before {
+            content: '> ';
+            opacity: 0.6;
+        }
+
+        .user .prompt::before {
+            content: '$ ';
+            opacity: 0.6;
+        }
+
+        .message-text {
+            color: var(--text);
+            margin-left: 1.5rem;
+        }
+
+        .message-text p {
+            margin: 0.75rem 0;
+        }
+
+        .message-text ul {
+            margin: 1rem 0;
+            padding-left: 2rem;
+        }
+
+        .message-text li {
+            margin: 0.5rem 0;
+            list-style-type: '- ';
+            color: var(--text-muted);
+        }
+
+        .action {
+            color: var(--accent);
+            font-weight: 700;
+        }
+
+        .action::before {
+            content: '[';
+            opacity: 0.6;
+        }
+
+        .action::after {
+            content: ']';
+            opacity: 0.6;
+        }
+
+        .success {
+            color: var(--primary);
+            font-weight: 700;
+        }
+
+        .warning {
+            color: #d4a574;
+            font-weight: 700;
+        }
+
+        .error {
+            color: #d97066;
+            font-weight: 700;
+        }
+
+        /* Section Divider */
+        .divider {
+            margin: 4rem 0;
+            text-align: center;
+            position: relative;
+        }
+
+        .divider::before,
+        .divider::after {
+            content: '─────────────────────────────────────────';
+            display: block;
+            color: var(--primary);
+            opacity: 0.4;
+            font-weight: 300;
+        }
+
+        .divider-text {
+            color: var(--primary);
+            font-family: 'Crimson Pro', serif;
+            font-size: 1.5rem;
+            margin: 1rem 0;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            font-weight: 600;
+            animation: warmPulse 3s ease-in-out infinite alternate;
+        }
+
+        @keyframes warmPulse {
+            from {
+                text-shadow: 0 0 10px rgba(204, 120, 92, 0.3);
+            }
+            to {
+                text-shadow: 0 0 20px rgba(204, 120, 92, 0.5), 0 0 30px rgba(204, 120, 92, 0.3);
+            }
+        }
+
+        /* Stats Box */
+        .stats-box {
+            background: rgba(26, 22, 20, 0.6);
+            border: 2px solid var(--accent);
+            padding: 2rem;
+            margin: 3rem 0;
+            box-shadow: 0 0 20px rgba(184, 139, 111, 0.2);
+            border-radius: 4px;
+        }
+
+        .stats-box h3 {
+            color: var(--primary);
+            margin-bottom: 1.5rem;
+            font-family: 'Crimson Pro', serif;
+            font-size: 1.8rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .stat-line {
+            display: flex;
+            justify-content: space-between;
+            margin: 0.75rem 0;
+            padding: 0.75rem;
+            background: rgba(204, 120, 92, 0.05);
+            border-radius: 2px;
+            transition: all 0.3s ease;
+        }
+
+        .stat-line:hover {
+            background: rgba(204, 120, 92, 0.1);
+            padding-left: 1rem;
+        }
+
+        .stat-label {
+            color: var(--text-muted);
+        }
+
+        .stat-value {
+            color: var(--primary);
+            font-weight: 700;
+        }
+
+        /* Code Block */
+        .code-block {
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(204, 120, 92, 0.3);
+            padding: 1rem;
+            margin: 1rem 0;
+            font-size: 0.9rem;
+            overflow-x: auto;
+            border-radius: 4px;
+            color: var(--text-muted);
+        }
+
+        .code-block span.highlight {
+            color: var(--primary);
+        }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: 4rem 0;
+            color: var(--text);
+        }
+
+        .footer-art {
+            font-family: 'Crimson Pro', serif;
+            font-size: 1.3rem;
+            margin-bottom: 1.5rem;
+            color: var(--primary);
+        }
+
+        .footer-content {
+            max-width: 600px;
+            margin: 0 auto;
+            line-height: 1.8;
+        }
+
+        .blink {
+            animation: blink 1.5s ease-in-out infinite;
+        }
+
+        @keyframes blink {
+            0%, 49% { opacity: 1; }
+            50%, 100% { opacity: 0.3; }
+        }
+
+        /* Cursor */
+        .cursor::after {
+            content: '▋';
+            animation: blink 1.5s ease-in-out infinite;
+            margin-left: 2px;
+            color: var(--primary);
+        }
+
+        /* Warm grain texture overlay */
+        .terminal::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.03'/%3E%3C/svg%3E");
+            pointer-events: none;
+            border-radius: 0 0 8px 8px;
+        }
+
+        .terminal {
+            position: relative;
+        }
+
+        /* Minimized Mode - Show TLDRs */
+        body.minimized .message-text,
+        body.minimized .boot-sequence,
+        body.minimized .ascii-art,
+        body.minimized .code-block,
+        body.minimized .stats-box,
+        body.minimized .divider,
+        body.minimized .footer {
+            display: none;
+        }
+
+        body.minimized .message-tldr {
+            display: block;
+        }
+
+        body.minimized .message {
+            margin: 0.75rem 0;
+            padding: 0.75rem;
+        }
+
+        body.minimized .prompt {
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        body.minimized .message.user {
+            background: rgba(0, 0, 0, 0.6);
+            margin: 0.5rem 0;
+        }
+
+        /* Closed Mode - Collapse terminal body */
+        body.closed .terminal {
+            display: none;
+        }
+
+        body.closed .terminal-header {
+            cursor: pointer;
+        }
+
+        body.closed .terminal-header:hover {
+            box-shadow: 0 0 40px rgba(204, 120, 92, 0.4);
+        }
+
+        /* TLDR styling */
+        .message-tldr {
+            display: none;
+            color: var(--text-muted);
+            font-style: italic;
+            margin-left: 1.5rem;
+            font-size: 0.95rem;
+        }
+
+        /* Fullscreen Mode */
+        body.fullscreen .container {
+            max-width: 100%;
+            padding: 2rem 4rem;
+        }
+
+        body.fullscreen .terminal {
+            min-height: 100vh;
+        }
+
+        /* Scroll Progress Bar */
+        .progress-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary-dark), var(--primary), var(--secondary));
+            width: 0%;
+            z-index: 10000;
+            transition: width 0.1s ease;
+            box-shadow: 0 0 10px rgba(204, 120, 92, 0.6);
+        }
+
+        /* Scrolling Crab Easter Egg */
+        .crab-peek {
+            position: fixed;
+            bottom: 0;
+            z-index: 998;
+            pointer-events: none;
+            transition: transform 0.3s ease-out;
+            width: 80px;
+            height: 80px;
+            filter: drop-shadow(0 0 10px rgba(204, 120, 92, 0.5));
+        }
+
+        .crab-left {
+            left: 2rem;
+            transform: translateY(100%);
+        }
+
+        .crab-right {
+            right: 2rem;
+            transform: translateY(100%) scaleX(-1);
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
+
+            .terminal {
+                padding: 1rem;
+            }
+
+            .ascii-art {
+                display: none;
+            }
+
+            .ascii-art-mobile {
+                display: block;
+            }
+
+            .divider::before,
+            .divider::after {
+                content: '──────────────────────';
+            }
+
+            .crab-peek {
+                width: 50px;
+                height: 50px;
+            }
+
+            .crab-left {
+                left: 0.5rem;
+            }
+
+            .crab-right {
+                right: 0.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Scroll Progress Bar -->
+    <div class="progress-bar" id="progressBar"></div>
+
+    <!-- Peeking Crabs -->
+    <div class="crab-peek crab-left" id="crabLeft">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="51.916 43.705 51.965 32.726">
+            <path transform="matrix(1,0,0,1,51.959528,17.645891)" stroke="#ff7f56" fill="#CC785C" d="M14.301201,26.072279Q14.301201,26.072279 6.4928215,26.111274Q6.414042,38.830753 6.414042,38.830753C4.4103881,39.131726 1.2850898,38.338181 -0.00053264616,39.339828C0.38389387,41.289172 -0.63949803,44.629806 0.56583427,45.768089Q0.56583427,45.768089 6.414042,45.907L6.4955381,52.305734Q8.9041995,52.305734 8.9041995,52.305734C9.1861495,54.326667 8.3442748,56.976915 9.316964,58.636752C11.086075,58.484215 14.004357,59.442667 13.239102,56.651475C13.766782,55.388324 12.282177,52.071572 14.337326,52.381013C16.402511,52.074951 14.850859,55.408517 15.355587,56.676963C14.966686,58.313033 15.588801,58.937049 17.110497,58.629188C17.110497,58.629188 19.450696,58.629188 19.450696,58.629188C19.974577,56.971833 19.569113,55.125625 19.782584,53.392694C19.432571,51.914974 20.828815,52.358541 21.751177,52.305734C21.751177,52.305734 32.145669,52.305734 32.145669,52.305734C32.42762,54.326667 31.585743,56.976915 32.558434,58.636752C33.879654,58.621761 35.201023,58.632363 36.52231,58.629188C36.52231,58.629188 36.52231,52.292033 36.52231,52.292033C38.073514,52.098653 39.042318,52.477516 38.606872,54.234999C38.845716,56.051931 37.767587,59.525622 40.848684,58.638171C42.663297,59.197433 43.360472,58.113905 43.031655,56.454862Q43.031655,56.454862 43.08727,52.381013Q45.35105,52.230454 45.35105,52.230454C45.661916,50.225808 44.963253,47.232816 45.943317,45.857391C47.719631,45.431993 50.888525,46.472712 51.846365,45.265962C51.846365,45.265962 51.921745,38.906032 51.921745,38.906032C49.833611,38.571485 47.099942,39.556911 45.431282,38.421336C45.386826,34.344389 45.497905,30.258922 45.396929,26.179326C35.032498,26.024965 24.666414,26.05889 14.301201,26.072279ZM15.359593,35.79986C15.359593,35.79986 15.400794,38.490189 15.400794,38.490189C14.266162,39.624275 12.64013,38.646881 13.332107,37.052037C13.363054,35.384912 12.594978,32.013879 15.276819,33.181046C15.382427,34.038457 15.322771,34.929615 15.359593,35.79986ZM38.635171,35.892002Q38.635171,38.749752 38.635171,38.749752C35.685064,39.895156 36.744368,36.241777 36.535997,34.46456C35.948411,32.81052 37.20067,32.970537 38.355245,33.034252C38.985479,33.151344 38.465906,34.418244 38.635171,34.996305Q38.635171,34.996305 38.635171,35.892002Z" fill-rule="nonzero"/>
+        </svg>
+    </div>
+    <div class="crab-peek crab-right" id="crabRight">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="51.916 43.705 51.965 32.726">
+            <path transform="matrix(1,0,0,1,51.959528,17.645891)" stroke="#ff7f56" fill="#CC785C" d="M14.301201,26.072279Q14.301201,26.072279 6.4928215,26.111274Q6.414042,38.830753 6.414042,38.830753C4.4103881,39.131726 1.2850898,38.338181 -0.00053264616,39.339828C0.38389387,41.289172 -0.63949803,44.629806 0.56583427,45.768089Q0.56583427,45.768089 6.414042,45.907L6.4955381,52.305734Q8.9041995,52.305734 8.9041995,52.305734C9.1861495,54.326667 8.3442748,56.976915 9.316964,58.636752C11.086075,58.484215 14.004357,59.442667 13.239102,56.651475C13.766782,55.388324 12.282177,52.071572 14.337326,52.381013C16.402511,52.074951 14.850859,55.408517 15.355587,56.676963C14.966686,58.313033 15.588801,58.937049 17.110497,58.629188C17.110497,58.629188 19.450696,58.629188 19.450696,58.629188C19.974577,56.971833 19.569113,55.125625 19.782584,53.392694C19.432571,51.914974 20.828815,52.358541 21.751177,52.305734C21.751177,52.305734 32.145669,52.305734 32.145669,52.305734C32.42762,54.326667 31.585743,56.976915 32.558434,58.636752C33.879654,58.621761 35.201023,58.632363 36.52231,58.629188C36.52231,58.629188 36.52231,52.292033 36.52231,52.292033C38.073514,52.098653 39.042318,52.477516 38.606872,54.234999C38.845716,56.051931 37.767587,59.525622 40.848684,58.638171C42.663297,59.197433 43.360472,58.113905 43.031655,56.454862Q43.031655,56.454862 43.08727,52.381013Q45.35105,52.230454 45.35105,52.230454C45.661916,50.225808 44.963253,47.232816 45.943317,45.857391C47.719631,45.431993 50.888525,46.472712 51.846365,45.265962C51.846365,45.265962 51.921745,38.906032 51.921745,38.906032C49.833611,38.571485 47.099942,39.556911 45.431282,38.421336C45.386826,34.344389 45.497905,30.258922 45.396929,26.179326C35.032498,26.024965 24.666414,26.05889 14.301201,26.072279ZM15.359593,35.79986C15.359593,35.79986 15.400794,38.490189 15.400794,38.490189C14.266162,39.624275 12.64013,38.646881 13.332107,37.052037C13.363054,35.384912 12.594978,32.013879 15.276819,33.181046C15.382427,34.038457 15.322771,34.929615 15.359593,35.79986ZM38.635171,35.892002Q38.635171,38.749752 38.635171,38.749752C35.685064,39.895156 36.744368,36.241777 36.535997,34.46456C35.948411,32.81052 37.20067,32.970537 38.355245,33.034252C38.985479,33.151344 38.465906,34.418244 38.635171,34.996305Q38.635171,34.996305 38.635171,35.892002Z" fill-rule="nonzero"/>
+        </svg>
+    </div>
+
+    <div class="container">
+        <!-- Terminal Window -->
+        <div class="terminal-header">
+            <div class="terminal-button close"></div>
+            <div class="terminal-button minimize"></div>
+            <div class="terminal-button maximize"></div>
+            <div class="terminal-title">
+                <span>transcript.log — claude@wrapped-code</span>
+                <span class="mode-indicator mode-closed">COLLAPSED</span>
+                <span class="mode-indicator mode-minimized">TLDR MODE</span>
+                <span class="mode-indicator mode-fullscreen">FULLSCREEN</span>
+            </div>
+        </div>
+
+        <div class="terminal">
+            <!-- ASCII Art Header - Desktop -->
+            <pre class="ascii-art">
+ ██████╗██╗      █████╗ ██╗   ██╗██████╗ ███████╗     ██████╗ ██████╗ ██████╗ ███████╗
+██╔════╝██║     ██╔══██╗██║   ██║██╔══██╗██╔════╝    ██╔════╝██╔═══██╗██╔══██╗██╔════╝
+██║     ██║     ███████║██║   ██║██║  ██║█████╗      ██║     ██║   ██║██║  ██║█████╗
+██║     ██║     ██╔══██║██║   ██║██║  ██║██╔══╝      ██║     ██║   ██║██║  ██║██╔══╝
+╚██████╗███████╗██║  ██║╚██████╔╝██████╔╝███████╗    ╚██████╗╚██████╔╝██████╔╝███████╗
+ ╚═════╝╚══════╝╚═╝  ╚═╝ ╚═════╝ ╚═════╝ ╚══════╝     ╚═════╝ ╚═════╝ ╚═════╝ ╚══════╝
+
+            ██╗    ██╗██████╗  █████╗ ██████╗ ██████╗ ███████╗██████╗
+            ██║    ██║██╔══██╗██╔══██╗██╔══██╗██╔══██╗██╔════╝██╔══██╗
+            ██║ █╗ ██║██████╔╝███████║██████╔╝██████╔╝█████╗  ██║  ██║
+            ██║███╗██║██╔══██╗██╔══██║██╔═══╝ ██╔═══╝ ██╔══╝  ██║  ██║
+            ╚███╔███╔╝██║  ██║██║  ██║██║     ██║     ███████╗██████╔╝
+             ╚══╝╚══╝ ╚═╝  ╚═╝╚═╝  ╚═╝╚═╝     ╚═╝     ╚══════╝╚═════╝
+            </pre>
+
+            <!-- ASCII Art Header - Mobile -->
+            <pre class="ascii-art-mobile">
+   _____ _                 _
+  / ____| |               | |
+ | |    | | __ _ _   _  __| | ___
+ | |    | |/ _` | | | |/ _` |/ _ \
+ | |____| | (_| | |_| | (_| |  __/
+  \_____|_|\__,_|\__,_|\__,_|\___|
+
+   ____          _
+  / ___|___   __| | ___
+ | |   / _ \ / _` |/ _ \
+ | |__| (_) | (_| |  __/
+  \____\___/ \__,_|\___|
+
+ __        __                           _
+ \ \      / / __ __ _ _ __  _ __   ___| |
+  \ \ /\ / / '__/ _` | '_ \| '_ \ / _ \ |
+   \ V  V /| | | (_| | |_) | |_) |  __/ |
+    \_/\_/ |_|  \__,_| .__/| .__/ \___|_|
+                     |_|   |_|
+            </pre>
+
+            <!-- Boot Sequence -->
+            <div class="boot-sequence">
+                <p>SYSTEM INIT... <span class="success">OK</span></p>
+                <p>LOADING TRANSCRIPT DATA... <span class="success">OK</span></p>
+                <p>SESSIONS DETECTED: 2</p>
+                <p>META LEVEL: <span class="success">MAXIMUM</span> 🤯</p>
+            </div>
+
+            <div class="code-block">
+$ cat README.md<br>
+Building a tool to analyze Claude Code usage... using Claude Code<br>
+Date: December 6-8, 2025<br>
+Status: <span class="highlight">PRODUCTION READY</span>
+            </div>
+
+            <!-- Session 1 Header -->
+            <div class="divider">
+                <div class="divider-text">▸ Session 1: Building the Tool</div>
+            </div>
+
+            <!-- Messages -->
+            <div class="message user">
+                <div class="prompt">USER</div>
+                <div class="message-tldr">Init the project and plan Claude Code usage analysis</div>
+                <div class="message-text">
+                    <p>use @plan.md to make sense of this repo and then /init the CLAUDE.md file. make any other plans before you start trying to analyze Claude Code usage on this computer</p>
+                </div>
+            </div>
+
+            <div class="message">
+                <div class="prompt">CLAUDE</div>
+                <div class="message-tldr">Created project structure with 6-phase analysis plan</div>
+                <div class="message-text">
+                    <p>I'll help you create a Claude Code Wrapped tool - a Spotify Wrapped-style year-end summary for your Claude Code usage.</p>
+                    <p><span class="action">CREATED CLAUDE.md</span></p>
+                    <p><span class="action">CREATED log.md</span></p>
+                    <p><span class="action">CREATED ANALYSIS_PLAN.md</span></p>
+                    <p>6-phase approach initialized</p>
+                </div>
+            </div>
+
+            <div class="message user">
+                <div class="prompt">USER</div>
+                <div class="message-tldr">Clarifying scope: whole computer or just this directory?</div>
+                <div class="message-text">
+                    <p>this will analyze my whole computer?</p>
+                </div>
+            </div>
+
+            <div class="message">
+                <div class="prompt">CLAUDE</div>
+                <div class="message-tldr">Analysis targets ~/.claude/ - global across all projects</div>
+                <div class="message-text">
+                    <p>The analysis will look at <span class="success">~/.claude/</span> which contains ALL your Claude Code data across every project on your computer. It's a global analysis, not limited to one directory.</p>
+                </div>
+            </div>
+
+            <div class="message user">
+                <div class="prompt">USER</div>
+                <div class="message-tldr">Caught date error: should be 2025, not 2024</div>
+                <div class="message-text">
+                    <p>i think you have your dates off lol. i only started using claude in 2025</p>
+                </div>
+            </div>
+
+            <div class="message">
+                <div class="prompt">CLAUDE</div>
+                <div class="message-tldr">Fixed all dates from 2024 to 2025</div>
+                <div class="message-text">
+                    <p>😅 You're absolutely right!</p>
+                    <p><span class="action">CORRECTED dates 2024 → 2025</span></p>
+                    <p><span class="action">RENAMED WRAPPED_2024-2025.md → WRAPPED_2025.md</span></p>
+                </div>
+            </div>
+
+            <div class="message user">
+                <div class="prompt">USER</div>
+                <div class="message-tldr">How is a "message" counted in the stats?</div>
+                <div class="message-text">
+                    <p>you said this conversation had 232 message. how is a message counted?</p>
+                </div>
+            </div>
+
+            <div class="message">
+                <div class="prompt">CLAUDE</div>
+                <div class="message-tldr">Explained: messages = all events (user + system), not just user inputs</div>
+                <div class="message-text">
+                    <p><span class="warning">MESSAGE COUNTING EXPLAINED:</span></p>
+                    <div class="code-block"><pre style="margin: 0; font-family: inherit; text-align: left;">Each line in .jsonl = 1 message/event
+├─ User messages
+├─ Assistant messages
+├─ Tool calls
+├─ Tool results
+└─ System messages
+
+"232 messages" = 232 total events
+NOT: "232 things you typed"</pre></div>
+                </div>
+            </div>
+
+            <div class="message user">
+                <div class="prompt">USER</div>
+                <div class="message-tldr">Need to count only user inputs for non-technical users</div>
+                <div class="message-text">
+                    <p>ah i see. we need to count the number of times i input something. will make things more understandable esp to the tons of non technical ppl who use claude code</p>
+                </div>
+            </div>
+
+            <div class="message">
+                <div class="prompt">CLAUDE</div>
+                <div class="message-tldr">Built count_user_inputs.py to track actual user messages</div>
+                <div class="message-text">
+                    <p><span class="success">KEY INSIGHT DETECTED:</span></p>
+                    <p>Non-technical users want: "How many times did I type something?"</p>
+                    <p>NOT: "How many system events occurred?"</p>
+                    <p><span class="action">BUILDING count_user_inputs.py</span></p>
+                </div>
+            </div>
+
+            <div class="message user">
+                <div class="prompt">USER</div>
+                <div class="message-tldr">Want Spotify Wrapped parody - what other data to extract?</div>
+                <div class="message-text">
+                    <p>i want to do a spotify wrapped parody. any other useful data to extract?</p>
+                </div>
+            </div>
+
+            <div class="message">
+                <div class="prompt">CLAUDE</div>
+                <div class="message-tldr">Built spotify_wrapped_analysis.py with fun personality stats</div>
+                <div class="message-text">
+                    <p><span class="success">🎵 FUN STATS ANALYSIS:</span></p>
+                    <ul>
+                        <li>Time patterns (early bird vs night owl)</li>
+                        <li>Coding streaks</li>
+                        <li>Personality profiles</li>
+                        <li>Hottest month</li>
+                        <li>Word count</li>
+                        <li>Session styles</li>
+                    </ul>
+                    <p><span class="action">BUILDING spotify_wrapped_analysis.py</span></p>
+                </div>
+            </div>
+
+            <!-- Session 2 Header -->
+            <div class="divider">
+                <div class="divider-text">▸ Session 2: Publishing to GitHub</div>
+            </div>
+
+            <div class="message user">
+                <div class="prompt">USER</div>
+                <div class="message-tldr">Pre-launch nerves - do final check of github/ folder</div>
+                <div class="message-text">
+                    <p>oh man. i'm nervous. do one more check of @github/</p>
+                </div>
+            </div>
+
+            <div class="message">
+                <div class="prompt">CLAUDE</div>
+                <div class="message-tldr">Cleaned up github/ - removed .DS_Store and added docs</div>
+                <div class="message-text">
+                    <p>Don't be nervous - let me do a thorough final check!</p>
+                    <p><span class="action">SCANNING github/ directory</span></p>
+                    <p><span class="action">REMOVED .DS_Store</span></p>
+                    <p><span class="action">CREATED comprehensive documentation</span></p>
+                    <p><span class="success">✓ github/ folder is clean and ready</span></p>
+                </div>
+            </div>
+
+            <div class="message user">
+                <div class="prompt">USER</div>
+                <div class="message-tldr">Check live repo - might have pushed too many files</div>
+                <div class="message-text">
+                    <p>can you check the repo live? i may have put too much stuff there</p>
+                </div>
+            </div>
+
+            <div class="message">
+                <div class="prompt">CLAUDE</div>
+                <div class="message-tldr">Found extra dev files in repo - needs cleanup</div>
+                <div class="message-text">
+                    <p><span class="warning">⚠ WARNING: EXTRA FILES DETECTED</span></p>
+                    <div class="code-block"><pre style="margin: 0; font-family: inherit; text-align: left;">REPO SCAN RESULTS:
+├─ log.md (should not be public)
+├─ analyze_claude_code.py (dev version)
+├─ github/ (should be at root level)
+└─ Other dev files
+
+<span class="highlight">STATUS: NEEDS CLEANUP</span></pre></div>
+                </div>
+            </div>
+
+            <div class="message user">
+                <div class="prompt">USER</div>
+                <div class="message-tldr">Please clean it up</div>
+                <div class="message-text">
+                    <p>yes do it pls</p>
+                </div>
+            </div>
+
+            <div class="message">
+                <div class="prompt">CLAUDE</div>
+                <div class="message-tldr">Cleaned repo - removed dev files and flattened github/ to root</div>
+                <div class="message-text">
+                    <p><span class="action">CREATING cleanup_repo.sh</span></p>
+                    <p><span class="action">REMOVING unwanted files from git</span></p>
+                    <p><span class="action">FLATTENING github/ to root</span></p>
+                    <p><span class="action">COMMITTING changes</span></p>
+                    <p><span class="action">PUSHING to remote</span></p>
+                    <p><span class="success">✓ CLEANUP COMPLETE</span></p>
+                </div>
+            </div>
+
+            <div class="message user">
+                <div class="prompt">USER</div>
+                <div class="message-tldr">Worried about personal data in commit history</div>
+                <div class="message-text">
+                    <p>i'm worried ppl can dig into my commit history to see unwanted files</p>
+                </div>
+            </div>
+
+            <div class="message">
+                <div class="prompt">CLAUDE</div>
+                <div class="message-tldr">Found personal data in git history - recommend fresh start</div>
+                <div class="message-text">
+                    <p><span class="error">🚨 SECURITY ALERT</span></p>
+                    <p>Git history is <span class="error">PERMANENT</span> - deleted files stay in commit history!</p>
+                    <div class="code-block"><pre style="margin: 0; font-family: inherit; text-align: left;">COMMIT b6dacaf CONTAINS:
+├─ archive/WRAPPED_2025.md (personal stats)
+├─ archive/SPOTIFY_WRAPPED_2025.md (personal data)
+└─ log.md (dev notes)
+
+<span class="highlight">EXPOSURE RISK: HIGH</span></pre></div>
+                    <p><span class="success">SOLUTION: FRESH START</span></p>
+                    <p>Nuke repo and rebuild with clean history</p>
+                </div>
+            </div>
+
+            <div class="message user">
+                <div class="prompt">USER</div>
+                <div class="message-tldr">Deleted repo and recreated - ready for fresh push</div>
+                <div class="message-text">
+                    <p>option 1. i just deleted it. then recreated it. do your think</p>
+                </div>
+            </div>
+
+            <div class="message">
+                <div class="prompt">CLAUDE</div>
+                <div class="message-tldr">Successfully rebuilt repo with clean history - 100% privacy</div>
+                <div class="message-text">
+                    <p><span class="action">EXECUTING fresh_start.sh</span></p>
+                    <p><span class="action">CREATING clean temp repo</span></p>
+                    <p><span class="action">COPYING only public files</span></p>
+                    <p><span class="action">INITIALIZING git</span></p>
+                    <p><span class="action">PUSHING to GitHub</span></p>
+                    <p><span class="success">🎉 SUCCESS! 100% CLEAN!</span></p>
+                </div>
+            </div>
+
+            <!-- Stats Summary -->
+            <div class="stats-box">
+                <h3>Build Summary</h3>
+                <div class="stat-line">
+                    <span class="stat-label">Clean public files:</span>
+                    <span class="stat-value">11</span>
+                </div>
+                <div class="stat-line">
+                    <span class="stat-label">Usage methods:</span>
+                    <span class="stat-value">3 (scripts, prompt, animation)</span>
+                </div>
+                <div class="stat-line">
+                    <span class="stat-label">Git commits:</span>
+                    <span class="stat-value">1 (zero history pollution)</span>
+                </div>
+                <div class="stat-line">
+                    <span class="stat-label">Personal data exposed:</span>
+                    <span class="stat-value">0</span>
+                </div>
+                <div class="stat-line">
+                    <span class="stat-label">Privacy level:</span>
+                    <span class="stat-value">100%</span>
+                </div>
+                <div class="stat-line">
+                    <span class="stat-label">Meta level:</span>
+                    <span class="stat-value">🤯 MAXIMUM</span>
+                </div>
+            </div>
+
+            <div class="stats-box">
+                <h3>Key Moments</h3>
+                <ul>
+                    <li>Discovered wrong metric (files vs messages)</li>
+                    <li>Shifted focus to user-typed messages</li>
+                    <li>Organized 3-tier structure</li>
+                    <li>Found personal data in git history</li>
+                    <li>Nuked and rebuilt repo</li>
+                </ul>
+            </div>
+
+            <!-- Footer -->
+            <div class="footer">
+                <div style="text-align: center; margin-bottom: 2rem;">
+                    <div style="font-size: 2rem; margin-bottom: 1rem;">🤯</div>
+                    <h3 style="color: var(--primary); font-size: 1.5rem; margin-bottom: 1rem; text-transform: uppercase; letter-spacing: 2px;">Meta Achievement Unlocked</h3>
+                </div>
+
+                <div class="code-block" style="max-width: 700px; margin: 0 auto 2rem;"><pre style="margin: 0; font-family: inherit; text-align: left;">USED CLAUDE CODE TO:
+├─ Build a tool that analyzes Claude Code usage
+├─ Document the development process
+├─ Publish the tool safely
+└─ Create this transcript of the entire journey
+
+All with Claude Code. Naturally. 🎵</pre></div>
+
+                <!-- Video Player -->
+                <div style="max-width: 800px; margin: 3rem auto; padding: 2rem; background: rgba(26, 22, 20, 0.6); border: 2px solid var(--primary); border-radius: 8px; box-shadow: 0 0 30px rgba(204, 120, 92, 0.3);">
+                    <h3 style="color: var(--primary); text-align: center; margin-bottom: 1.5rem; font-family: 'Crimson Pro', serif; font-size: 1.5rem; text-transform: uppercase; letter-spacing: 2px;">Watch the Wrapped</h3>
+                    <div style="position: relative; padding-bottom: 177.78%; height: 0; overflow: hidden; border-radius: 4px; background: #000;">
+                        <iframe
+                            style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;"
+                            src="https://www.youtube.com/embed/4wKiqYvNysY"
+                            frameborder="0"
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                            allowfullscreen>
+                        </iframe>
+                    </div>
+                    <p style="text-align: center; margin-top: 1rem; color: var(--text-muted); font-size: 0.9rem;">
+                        <span class="success">▶</span> The full Claude Code Wrapped experience
+                    </p>
+                </div>
+
+                <div style="text-align: center; margin-top: 2rem; padding-top: 2rem; border-top: 1px solid rgba(204, 120, 92, 0.3);">
+                    <p style="color: var(--primary); font-size: 1.2rem; letter-spacing: 2px; margin-bottom: 2rem;">#ClaudeCodeWrapped</p>
+                    <p style="color: var(--text-muted); margin-bottom: 1rem;">
+                        <a href="https://github.com/lpcode808/Wrapped-Claude-Code" target="_blank" rel="noopener noreferrer" style="color: var(--primary); text-decoration: none; transition: all 0.3s ease;">
+                            <span style="border: 1px solid var(--primary); padding: 0.5rem 1.5rem; border-radius: 4px; display: inline-block; background: rgba(204, 120, 92, 0.1);">
+                                ⭐ View on GitHub
+                            </span>
+                        </a>
+                    </p>
+                    <p style="color: var(--text-muted);">
+                        <span class="success">SESSION TERMINATED</span>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Scroll progress bar and crab peeking
+        const crabLeft = document.getElementById('crabLeft');
+        const crabRight = document.getElementById('crabRight');
+
+        // Debug: Check if crabs exist
+        console.log('Crab Left:', crabLeft);
+        console.log('Crab Right:', crabRight);
+
+        window.addEventListener('scroll', () => {
+            const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+            const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+            const scrolled = (winScroll / height) * 100;
+
+            // Update progress bar
+            document.getElementById('progressBar').style.width = scrolled + '%';
+
+            // Crab peeking logic - they peek up from the bottom as you scroll
+            // Left crab peeks up from 20% to 70% scroll
+            const leftPeek = Math.max(0, Math.min(100, (scrolled - 20) * (100 / 50)));
+            const leftTransformY = 100 - leftPeek;
+            crabLeft.style.transform = `translateY(${leftTransformY}%)`;
+
+            // Right crab peeks up from 30% to 80% scroll (offset for variety)
+            const rightPeek = Math.max(0, Math.min(100, (scrolled - 30) * (100 / 50)));
+            const rightTransformY = 100 - rightPeek;
+            crabRight.style.transform = `translateY(${rightTransformY}%) scaleX(-1)`;
+
+            // Debug logging (only log every 10% to avoid spam)
+            if (Math.floor(scrolled) % 10 === 0) {
+                console.log(`Scroll: ${scrolled.toFixed(1)}% | Left Peek: ${leftPeek.toFixed(1)}% (Y: ${leftTransformY.toFixed(1)}%) | Right Peek: ${rightPeek.toFixed(1)}% (Y: ${rightTransformY.toFixed(1)}%)`);
+            }
+        });
+
+        // Terminal button functionality
+        const closeBtn = document.querySelector('.terminal-button.close');
+        const minimizeBtn = document.querySelector('.terminal-button.minimize');
+        const maximizeBtn = document.querySelector('.terminal-button.maximize');
+        const terminalHeader = document.querySelector('.terminal-header');
+
+        // Close button - Collapse to header bar only
+        closeBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            document.body.classList.toggle('closed');
+        });
+
+        // Allow clicking header to re-open when closed
+        terminalHeader.addEventListener('click', () => {
+            if (document.body.classList.contains('closed')) {
+                document.body.classList.remove('closed');
+            }
+        });
+
+        // Minimize button - Toggle TLDR view
+        minimizeBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            document.body.classList.toggle('minimized');
+        });
+
+        // Maximize button - Toggle fullscreen
+        maximizeBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            document.body.classList.toggle('fullscreen');
+        });
+    </script>
+</body>
+</html>
