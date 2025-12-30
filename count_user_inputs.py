@@ -6,6 +6,7 @@ This gives non-technical users a clearer understanding of engagement.
 
 import json
 import os
+import re
 from pathlib import Path
 from collections import defaultdict
 
@@ -67,10 +68,15 @@ def main():
             for key in ['user', 'assistant', 'tools', 'total']:
                 total_stats[key] += stats[key]
 
-            # Extract project name
-            project = jsonl_file.parent.name.replace('-Users-justinlai-Coding-', '')
-            if project == '-Users-justinlai-Coding':
-                project = 'Coding (root)'
+            # Extract project name from folder path
+            project = jsonl_file.parent.name
+            # Remove path prefixes like -Users-<username>-<folder>-
+            project = re.sub(r'^-Users-[^-]+-[^-]+-', '', project)
+            # Handle direct home subdirs like -Users-<username>-<project>
+            project = re.sub(r'^-Users-[^-]+-', '', project)
+            # Handle bare home directory
+            if re.match(r'^-Users-[^-]*$', project) or project == '':
+                project = 'Home'
 
             project_stats[project]['user'] += stats['user']
             project_stats[project]['assistant'] += stats['assistant']
