@@ -26,7 +26,7 @@ def count_messages_in_file(filepath):
 
                     if msg_type == 'user':
                         user_messages += 1
-                    elif msg_type == 'message' and data.get('message', {}).get('role') == 'assistant':
+                    elif msg_type == 'assistant':
                         assistant_messages += 1
                     elif msg_type == 'tool_use':
                         tool_uses += 1
