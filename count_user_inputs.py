@@ -28,8 +28,13 @@ def count_messages_in_file(filepath):
                         user_messages += 1
                     elif msg_type == 'message' and data.get('message', {}).get('role') == 'assistant':
                         assistant_messages += 1
-                    elif msg_type == 'tool_use':
-                        tool_uses += 1
+                    elif msg_type == 'assistant':
+                        # Tool uses are embedded in the content array of assistant messages
+                        content = data.get('message', {}).get('content', [])
+                        if isinstance(content, list):
+                            for item in content:
+                                if isinstance(item, dict) and item.get('type') == 'tool_use':
+                                    tool_uses += 1
 
                 except json.JSONDecodeError:
                     continue
